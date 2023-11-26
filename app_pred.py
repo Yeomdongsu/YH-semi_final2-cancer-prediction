@@ -1,4 +1,56 @@
 import streamlit as st
+# import joblib 
+import numpy as np
+from app_makemodel import make_model
 
 def app_run_pred() :
-    pass
+    st.header("암 유무 예측 페이지 입니다.")
+
+    # model = joblib.load("./model/model.pkl")
+
+    gender = st.selectbox("성별을 선택해주세요.", ["남성", "여성"])
+    st.success(f"성별은 {gender}입니다.")
+    if gender == "남성" :
+        gender = 0
+    else : gender = 1    
+    st.markdown("\n")
+
+    age = st.number_input("나이를 적고 Enter를 눌러주세요", min_value=18, max_value=100)
+    st.success(f"나이는 {age}세 입니다.")
+    st.markdown("\n")
+
+    smoke = st.selectbox("비흡연은 0, 흡연은 1을 선택해주세요.", [0,1])
+    if smoke == 0 :
+        res = "비흡연자"
+    else : res = "흡연자"
+    st.success(f"{res} 입니다.")
+    st.markdown("\n")
+
+    fatigue = st.selectbox("피로감이 없으면 0, 있으면 1을 선택해주세요", [0,1])
+    if fatigue == 0 :
+        res = "피로가 없음"
+    else : res = "피로가 있음"
+    st.success(f"{res}에 체크하셨습니다.")
+    st.markdown("\n")
+
+    allergy = st.selectbox("알레르기가 없으면 0, 있으면 1을 선택해주세요", [0,1])
+    if allergy == 0 :
+        res = "알레르기가 없음"
+    else : res = "알레르기가 있음"
+    st.success(f"{res}에 체크하셨습니다.")
+    st.markdown("\n")
+
+    if st.button("암 유무 예측!") :
+        model,ac = make_model()
+        ac = round(ac * 100 , 3)
+
+        new_data = np.array([gender, age, smoke, fatigue, allergy]).reshape(1,-1)
+        
+        predict = int(model.predict(new_data))
+
+        if predict == 0 :
+            st.info(f"암 유무 : 없음으로 나왔습니다. \n\n 정확도 : {ac} % 입니다.")
+        elif predict == 1 :
+            st.info(f"암 유무 : 있음으로 나왔습니다. \n\n 정확도 : {ac} % 입니다.")
+        
+    else : st.text("")    
