@@ -28,7 +28,10 @@ def app_run_eda() :
     st.markdown("\n")    
 
     if st.checkbox("컬럼들의 빈도수 보기") :
-        column_select = st.selectbox("궁금한 컬럼을 고르세요.", df.columns)
+        st.info("색상은 선택마다 랜덤으로 나오게 됩니다.")
+        column_select = st.selectbox("궁금한 컬럼을 골라주세요.", df.columns)
+        
+        message = df[column_select].value_counts().sort_index().values
         
         def select_chart(column_select) :
             fig = plt.figure()
@@ -46,13 +49,21 @@ def app_run_eda() :
             st.info("최소 나이는 18세, 최대 나이는 100세, 평균 나이는 59세 입니다. ")
         elif column_select == df.columns[0] :
             st.pyplot(select_chart(column_select))
-            st.info("0은 남성, 1은 여성을 의미합니다.")
+            st.info(f"0은 남성, 1은 여성을 의미합니다.\n\n0은 {message[0]}개 , 1은 {message[1]}개 입니다.")
         else :                              
             st.pyplot(select_chart(column_select))
-            st.info(f"0은 {column_select}이(가) 없음, 1은 있음을 의미합니다.")
+            st.info(f"0은 {column_select}이(가) 없음, 1은 있음을 의미합니다.\n\n0은 {message[0]}개 , 1은 {message[1]}개 입니다.")
 
     st.markdown("\n")    
 
-    if st.checkbox("상관계수 확인하기") :
-        st.info("상관계수란 변수들간의 관련성을 의미하며 -1 ~ 1 사이 숫자로 나타난다.")
+    if st.checkbox("상관계수와 차트 보기") :
+        st.info("상관계수란 변수들간의 관련성을 의미하며 -1 ~ 1 사이 숫자로 나타납니다.")
         st.write(df.corr())
+
+        fig = plt.figure(figsize=(10,8))
+        sb.heatmap(df.corr(), annot=True, cmap="coolwarm", fmt=".2f", linewidths=.5)
+        plt.title("각 컬럼들의 상관관계")
+        plt.rc('font', family='Malgun Gothic')
+        st.pyplot(fig)
+        
+    else : st.text("")

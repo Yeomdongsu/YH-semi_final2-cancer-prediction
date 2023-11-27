@@ -1,12 +1,11 @@
 import streamlit as st
-# import joblib 
+import joblib 
 import numpy as np
-from app_makemodel import make_model
 
 def app_run_pred() :
     st.header("암 유무 예측 페이지 입니다.")
 
-    # model = joblib.load("./model/model.pkl")
+    model = joblib.load("./model/model.pkl")
 
     gender = st.selectbox("성별을 선택해주세요.", ["남성", "여성"])
     st.success(f"성별은 {gender}입니다.")
@@ -41,16 +40,17 @@ def app_run_pred() :
     st.markdown("\n")
 
     if st.button("암 유무 예측!") :
-        model,ac = make_model()
-        ac = round(ac * 100 , 3)
-
         new_data = np.array([gender, age, smoke, fatigue, allergy]).reshape(1,-1)
         
-        predict = int(model.predict(new_data))
+        res = int(model.predict(new_data))
+        proba = model.predict_proba(new_data) * 100
+        proba = np.round(proba, decimals=2)
 
-        if predict == 0 :
-            st.info(f"암 유무 : 없음으로 나왔습니다. \n\n 정확도 : {ac} % 입니다.")
-        elif predict == 1 :
-            st.info(f"암 유무 : 있음으로 나왔습니다. \n\n 정확도 : {ac} % 입니다.")
+        # print(proba, proba[0][0] , proba[0][1])
+
+        if res == 0 :
+            st.info(f"암이 없을 확률 : {proba[0][0]}% , 있을 확률 : {proba[0][1]}% 이므로\n\n'없음' 으로 예측되었습니다.")
+        elif res == 1 :
+            st.info(f"암이 없을 확률 : {proba[0][0]}% , 있을 확률 : {proba[0][1]}% 이므로\n\n'있음' 으로 예측되었습니다.")
         
     else : st.text("")    
