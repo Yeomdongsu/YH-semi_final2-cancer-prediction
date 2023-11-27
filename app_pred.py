@@ -43,14 +43,10 @@ def app_run_pred() :
         new_data = np.array([gender, age, smoke, fatigue, allergy]).reshape(1,-1)
         
         res = int(model.predict(new_data))
-        proba = model.predict_proba(new_data) * 100
-        proba = np.round(proba, decimals=2)
-
-        # print(proba, proba[0][0] , proba[0][1])
 
         if res == 0 :
-            st.info(f"암이 없을 확률 : {proba[0][0]}% , 있을 확률 : {proba[0][1]}% 이므로\n\n'없음' 으로 예측되었습니다.")
+            st.info(f"예측 결과 : 암이 '없음'으로 나왔습니다.")
         elif res == 1 :
-            st.info(f"암이 없을 확률 : {proba[0][0]}% , 있을 확률 : {proba[0][1]}% 이므로\n\n'있음' 으로 예측되었습니다.")
+            st.info(f"예측 결과 : 암이 '있음'으로 나왔습니다.")
         
     else : st.text("")    
