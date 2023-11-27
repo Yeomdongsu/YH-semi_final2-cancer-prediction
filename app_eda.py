@@ -62,8 +62,8 @@ def app_run_eda() :
 
         fig = plt.figure(figsize=(10,8))
         sb.heatmap(df.corr(), annot=True, cmap="coolwarm", fmt=".2f", linewidths=.5)
-        plt.title("각 컬럼들의 상관관계")
-        plt.rc('font', family='Malgun Gothic')
+        plt.title("Correlation Chart")
+        # plt.rc('font', family='Malgun Gothic')
         st.pyplot(fig)
         
     else : st.text("")
